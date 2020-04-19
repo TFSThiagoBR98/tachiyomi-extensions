@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.extension.all.boommanga
 
 import eu.kanade.tachiyomi.network.GET
+import eu.kanade.tachiyomi.network.asObservableSuccess
 import eu.kanade.tachiyomi.source.model.*
 import eu.kanade.tachiyomi.source.online.ParsedHttpSource
 import eu.kanade.tachiyomi.util.asJsoup
@@ -43,6 +44,25 @@ open class BoomManga (
     override fun mangaDetailsRequest(manga: SManga) = GET( manga.url, headers)
     override fun chapterListRequest(manga: SManga) = mangaDetailsRequest(manga)
     override fun pageListRequest(chapter: SChapter) = GET( chapter.url, headers)
+
+    private fun searchMangaByIdRequest(id: String) = GET("$baseUrl/detail/$id", headers)
+
+    private fun searchMangaByIdParse(response: Response, id: String): MangasPage {
+        val details = mangaDetailsParse(response)
+        details.url = "$baseUrl/detail/$id"
+        return MangasPage(listOf(details), false)
+    }
+
+    override fun fetchSearchManga(page: Int, query: String, filters: FilterList): rx.Observable<MangasPage> {
+        return if (query.startsWith(PREFIX_ID_SEARCH)) {
+            val id = query.removePrefix(PREFIX_ID_SEARCH)
+            client.newCall(searchMangaByIdRequest(id))
+                .asObservableSuccess()
+                .map { response -> searchMangaByIdParse(response, id) }
+        } else {
+            return super.fetchSearchManga(page, query, filters)
+        }
+    }
 
     override fun popularMangaFromElement(element: Element) = mangaFromElement(element)
     override fun latestUpdatesFromElement(element: Element) = mangaFromElement(element)
@@ -129,5 +149,8 @@ open class BoomManga (
     override fun imageUrlRequest(page: Page) = throw Exception("Not used")
     override fun imageUrlParse(document: Document) = throw Exception("Not used")
 
+    companion object {
+        const val PREFIX_ID_SEARCH = "id:"
+    }
 }
 

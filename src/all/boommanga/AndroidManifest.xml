@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name=".BoomMangaUrlActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="m.boommanga.com"
+                    android:pathPattern="/detail/..*" />
+                <data
+                    android:scheme="https"
+                    android:host="m.manmanga.com"
+                    android:pathPattern="/detail/..*" />
+                <data
+                    android:scheme="https"
+                    android:host="m.twinscomics.com"
+                    android:pathPattern="/detail/..*" />
+                <data
+                    android:scheme="https"
+                    android:host="m.boommanga.com"
+                    android:pathPattern="/cn/detail/..*" />
+                <data
+                    android:scheme="https"
+                    android:host="m.manmanga.com"
+                    android:pathPattern="/cn/detail/..*" />
+                <data
+                    android:scheme="https"
+                    android:host="m.twinscomics.com"
+                    android:pathPattern="/cn/detail/..*" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
