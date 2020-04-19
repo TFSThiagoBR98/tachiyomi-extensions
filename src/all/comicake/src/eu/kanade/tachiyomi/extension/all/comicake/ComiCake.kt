@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.extension.all.comicake
 import android.os.Build
 import eu.kanade.tachiyomi.extensions.BuildConfig
 import eu.kanade.tachiyomi.network.GET
+import eu.kanade.tachiyomi.network.asObservableSuccess
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.source.model.Page
@@ -14,6 +15,7 @@ import okhttp3.Request
 import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
+import rx.Observable
 import java.text.SimpleDateFormat
 
 abstract class ComiCake(
@@ -44,6 +46,25 @@ abstract class ComiCake(
     override fun popularMangaParse(response: Response): MangasPage {
         val res = response.body()!!.string()
         return getMangasPageFromComicsResponse(res)
+    }
+
+    private fun searchMangaByIdRequest(id: String) = GET("$readerBase/series/$id", headers)
+
+    private fun searchMangaByIdParse(response: Response, id: String): MangasPage {
+        val details = mangaDetailsParse(response)
+        details.url = "$readerBase/series/$id/"
+        return MangasPage(listOf(details), false)
+    }
+
+    override fun fetchSearchManga(page: Int, query: String, filters: FilterList): Observable<MangasPage> {
+        return if (query.startsWith(PREFIX_ID_SEARCH)) {
+            val id = query.removePrefix(PREFIX_ID_SEARCH)
+            client.newCall(searchMangaByIdRequest(id))
+                .asObservableSuccess()
+                .map { response -> searchMangaByIdParse(response, id) }
+        } else {
+            return super.fetchSearchManga(page, query, filters)
+        }
     }
 
     private fun getMangasPageFromComicsResponse(json: String, nested: Boolean = false): MangasPage {
@@ -162,6 +183,7 @@ abstract class ComiCake(
     override fun imageUrlParse(response: Response) = throw UnsupportedOperationException("This method should not be called!")
 
     companion object {
+        const val PREFIX_ID_SEARCH = "id:"
         private const val COMICAKE_DEFAULT_API_ENDPOINT = "/api" // Highly unlikely to change
         private const val COMICAKE_DEFAULT_READER_ENDPOINT = "/r" // Can change based on CC config
     }

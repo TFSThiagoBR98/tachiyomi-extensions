@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name=".ComiCakeUrlActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="reader.letitgo.scans.today"
+                    android:pathPattern="/series/..*" />
+                <data
+                    android:scheme="https"
+                    android:host="read.ptscans.com"
+                    android:pathPattern="/series/..*" />
+                <data
+                    android:scheme="https"
+                    android:host="whimsubs.xyz"
+                    android:pathPattern="/r/series/..*" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
