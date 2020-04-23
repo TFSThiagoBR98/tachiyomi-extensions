@@ -16,8 +16,7 @@ class BoomMangaUrlActivity : Activity() {
         super.onCreate(savedInstanceState)
         val pathSegments = intent?.data?.pathSegments
         if (pathSegments != null && pathSegments.size > 1) {
-            val id: String = if (pathSegments[0] == "cn" &&
-                pathSegments.size > 2) {
+            val id = if (pathSegments[0].equals("cn") && pathSegments.size > 2) {
                 pathSegments[2]
             } else {
                 pathSegments[1]
