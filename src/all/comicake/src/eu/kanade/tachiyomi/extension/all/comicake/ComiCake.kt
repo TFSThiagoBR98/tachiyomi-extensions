@@ -52,12 +52,12 @@ abstract class ComiCake(
 
     private fun searchMangaByIdParse(response: Response, id: String): MangasPage {
         val comicJson = JSONObject(response.body()!!.string()).getJSONArray("results")
-        if (comicJson.size == 1) {
-            val manga = comicJson[0]
-            val details = parseComicJson(comicJson)
-            return MangasPage(listOf(details), false)
+        return if (comicJson.length() == 1) {
+            val result = comicJson.getJSONObject(0)
+            val details = parseComicJson(result)
+            MangasPage(listOf(details), false)
         } else {
-            return MangasPage(emptyList(), false)
+            MangasPage(emptyList(), false)
         }
     }
 
@@ -68,7 +68,7 @@ abstract class ComiCake(
                 .asObservableSuccess()
                 .map { response -> searchMangaByIdParse(response, id) }
         } else {
-            return super.fetchSearchManga(page, query, filters)
+            super.fetchSearchManga(page, query, filters)
         }
     }
 
