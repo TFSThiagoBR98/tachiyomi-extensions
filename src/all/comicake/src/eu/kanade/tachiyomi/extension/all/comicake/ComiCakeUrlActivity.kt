@@ -18,7 +18,7 @@ class ComiCakeUrlActivity : Activity() {
         if (pathSegments != null && pathSegments.size > 1) {
             // Loop path segments to find series slug
             pathSegments.forEachIndexed { index, segment ->
-                if (segment == "series" && (index + 1) < pathSegments.size) {
+                if (segment.equals("series") && (index + 1) < pathSegments.size) {
                     val id = pathSegments[index + 1]
                     val mainIntent = Intent().apply {
                         action = "eu.kanade.tachiyomi.SEARCH"

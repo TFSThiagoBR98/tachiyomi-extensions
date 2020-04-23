@@ -48,12 +48,17 @@ abstract class ComiCake(
         return getMangasPageFromComicsResponse(res)
     }
 
-    private fun searchMangaByIdRequest(id: String) = GET("$readerBase/series/$id", headers)
+    private fun searchMangaByIdRequest(id: String) = GET("$apiBase/comics?slug=$id", headers)
 
     private fun searchMangaByIdParse(response: Response, id: String): MangasPage {
-        val details = mangaDetailsParse(response)
-        details.url = "$readerBase/series/$id/"
-        return MangasPage(listOf(details), false)
+        val comicJson = JSONObject(response.body()!!.string()).getJSONArray("results")
+        if (comicJson.size == 1) {
+            val manga = comicJson[0]
+            val details = parseComicJson(comicJson)
+            return MangasPage(listOf(details), false)
+        } else {
+            return MangasPage(emptyList(), false)
+        }
     }
 
     override fun fetchSearchManga(page: Int, query: String, filters: FilterList): Observable<MangasPage> {
