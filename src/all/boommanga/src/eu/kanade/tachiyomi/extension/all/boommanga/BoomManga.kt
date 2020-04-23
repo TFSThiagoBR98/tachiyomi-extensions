@@ -109,6 +109,7 @@ open class BoomManga (
         val manga = SManga.create()
         manga.author = authorget(document)?.trim()
         manga.artist = authorget(document)?.trim()
+        manga.title = document.select(".comic-name").text().trim()
         manga.description = document.select(".inner-text").text().trim()
         manga.thumbnail_url = thumbnailget(document)
         manga.genre = genreget(document)
